@@ -13,9 +13,9 @@ spec:
       params:
         - name: dockerRegistry
           value: $(params.dockerRegistry)
-    - name: deploy-to-cluster
+    - name: deploy-to-cp4i
       taskRef:
-        name: deploy-to-cluster
+        name: deploy-to-cp4i
       params:
         - name: dockerRegistry
           value: $(params.dockerRegistry)
