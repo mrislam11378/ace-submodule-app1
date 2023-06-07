@@ -9,12 +9,12 @@ FROM $BASE_IMAGE
 
 LABEL "maintainer"="trevor.dolby@ibm.com"
 
-WORKDIR /tmp/maven-output
+WORKDIR /work/ace-submodule-app1-work-dir
 
 RUN mkdir /home/aceuser/ace-server/shared-classes || /bin/true
 RUN touch /home/aceuser/ace-server/shared-classes/test.txt
 
-COPY ace-server /tmp/maven-output/ace-server/
+COPY ace-server /work/ace-submodule-app1-work-dir
 RUN rm -rf /home/aceuser/ace-server/run/* || /bin/true
 RUN cp -r /tmp/maven-output/ace-server/run/* /home/aceuser/ace-server/run/
 

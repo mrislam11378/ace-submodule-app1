@@ -29,6 +29,7 @@ spec:
         cd /work/ace-submodule-app1
         id
         ./build.sh
+        ls -l /work/ace-submodule-app1-work-dir
       volumeMounts:
         - mountPath: /work
           name: work
@@ -52,23 +53,18 @@ spec:
       image: $(params.dockerRegistry)/ace-minimal-devcontainer:12.0.8.0
       script: |
         #!/bin/bash
-        cd /work/maven-output
+        cd /work/ace-submodule-app1-work-dir
         cp /work/ace-submodule-app1/tekton/Dockerfile Dockerfile
         # Fix permissions issues 
-        chmod 777 /work/maven-output /work/maven-output/Dockerfile
-        chmod -R a+r /work/maven-output
-        find /work/maven-output -type d -print | xargs chmod 775
-        ls -l /work/maven-output
+        chmod 777 /work/ace-submodule-app1-work-dir /work/ace-submodule-app1-work-dir/Dockerfile
+        chmod -R a+r /work/ace-submodule-app1-work-dir
+        find /work/ace-submodule-app1-work-dir -type d -print | xargs chmod 775
+        ls -l /work/ace-submodule-app1-work-dir
       volumeMounts:
         - mountPath: /work
           name: work
     - name: docker-build-and-push
-      # kaniko is expecting to run as root to build images
-      securityContext:
-        runAsUser: 0
-        capabilities:
-          add: ["CHOWN", "DAC_OVERRIDE","FOWNER","SETFCAP","SETGID","SETUID"]
-      image: gcr.io/kaniko-project/executor:latest
+      image: gcr.io/kaniko-project/executor:v0.16.0
       # specifying DOCKER_CONFIG is required to allow kaniko to detect docker credential
       env:
         - name: "DOCKER_CONFIG"
@@ -76,10 +72,10 @@ spec:
       command:
         - /kaniko/executor
       args:
-        - --dockerfile=/work/maven-output/Dockerfile
+        - --dockerfile=/work/ace-submodule-app1-work-dir/Dockerfile
         - --destination=$(params.dockerRegistry)/tea-tekton
-        - --context=/work/maven-output
-        - --build-arg=BASE_IMAGE=$(params.dockerRegistry):ace-minimal-devcontainer-12.0.8.0
+        - --context=/work/ace-submodule-app1-work-dir
+        - --build-arg=BASE_IMAGE=$(params.dockerRegistry)/ace-minimal-devcontainer:12.0.8.0
         - --skip-tls-verify
       volumeMounts:
         - mountPath: /work

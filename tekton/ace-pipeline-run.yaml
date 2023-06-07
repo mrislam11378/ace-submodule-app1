@@ -3,9 +3,9 @@ kind: PipelineRun
 metadata:
   name: ace-pipeline-run-1
 spec:
-  serviceAccountName: ace-tekton-service-account
+  serviceAccountName: cp4i-tekton-service-account
   pipelineRef:
     name: ace-pipeline
   params:
     - name: dockerRegistry
-      value: "default-route-openshift-image-registry.apps.ocp-550004yuns-xwkb.cloud.techzone.ibm.com/default"
+      value: "default-route-openshift-image-registry.apps.ocp-550004yuns-xwkb.cloud.techzone.ibm.com/cp4i"
