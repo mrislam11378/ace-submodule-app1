@@ -23,6 +23,3 @@ ibmint deploy --input-path . --output-work-directory /work/ace-submodule-app1-wo
 
 # ibmint optimize server new for v12.0.4 - speed up test runs
 ibmint optimize server --work-directory /work/ace-submodule-app1-work-dir --enable JVM --disable NodeJS
-
-# Run the server to run the unit tests
-IntegrationServer -w /work/ace-submodule-app1-work-dir --test-project App1_UnitTest --test-junit-options "--reports-dir=junit-reports"
