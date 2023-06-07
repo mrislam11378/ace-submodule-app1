@@ -10,7 +10,7 @@ kind: Task
 # CP4i-style configuration mechanism, so verification in CP4i is needed also.
 #
 metadata:
-  name: maven-cp4i-build
+  name: ibmint-cp4i-build
   namespace: cp4i
 spec:
   # The security and environment settings are needed for OpenShift in a non-default
