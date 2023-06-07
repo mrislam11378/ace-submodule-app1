@@ -14,7 +14,7 @@ WORKDIR /work/ace-submodule-app1-work-dir
 RUN mkdir /home/aceuser/ace-server/shared-classes || /bin/true
 RUN touch /home/aceuser/ace-server/shared-classes/test.txt
 
-COPY ace-server /work/ace-submodule-app1-work-dir
+# COPY ace-server /tmp/maven-output/ace-server/
 RUN rm -rf /home/aceuser/ace-server/run/* || /bin/true
 RUN cp -r /work/ace-submodule-app1-work-dir/run/* /home/aceuser/ace-server/run/
 
