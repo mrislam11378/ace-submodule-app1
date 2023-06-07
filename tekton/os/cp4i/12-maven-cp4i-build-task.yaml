@@ -33,11 +33,12 @@ spec:
       script: |
         #!/bin/sh
         cd /work
-        git clone "https://github.com/ot4i/ace-demo-pipeline"
+        git clone --recurse-submodules "https://github.com/mrislam11378/ace-submodule-app1.git"
+        chmod -R 777 /work/ace-submodule-app1
       volumeMounts:
         - mountPath: /work
           name: work
-    - name: maven-build
+    - name: ibmint-build
       image: $(params.dockerRegistry)/ace-minimal-build:12.0.8.0-alpine
       #
       # Runs the build and unit test phases, leaving the results in the work directory
@@ -48,12 +49,28 @@ spec:
         export LICENSE=accept
         . /opt/ibm/ace-12/server/bin/mqsiprofile
         export PATH=/opt/ibm/ace-12/common/jdk/bin:$PATH
-        mkdir /work/maven-output
-        cd /work/ace-demo-pipeline
-        mvn --no-transfer-progress -Dinstall.work.directory=/work/maven-output/ace-server install
+        cd /work/ace-submodule-app1
+        id
+        ./build.sh
+        ls -l /work/ace-submodule-app1
+        ls -l /work/ace-submodule-app1-work-dir
       volumeMounts:
         - mountPath: /work
           name: work
+    - name: unit-test
+      image: $(params.dockerRegistry)/ace-minimal-build:12.0.8.0-alpine
+      script: |
+        #!/bin/bash
+        export LICENSE=accept
+        . /opt/ibm/ace-12/server/bin/mqsiprofile
+        export PATH=/opt/ibm/ace-12/common/jdk/bin:$PATH
+        cd /work/ace-submodule-app1
+        id
+        ./build-and-ut.sh
+      volumeMounts:
+        - mountPath: /work
+          name: work
+    
     - name: container-setup
       image: $(params.dockerRegistry)/ace-minimal-build:12.0.8.0-alpine
       #
@@ -62,13 +79,13 @@ spec:
       #
       script: |
         #!/bin/bash
-        cd /work/maven-output
-        cp /work/ace-demo-pipeline/tekton/os/cp4i/Dockerfile Dockerfile
+        cd /work/ace-submodule-app1-work-dir
+        cp /work/ace-submodule-app1/tekton/os/cp4i/Dockerfile Dockerfile
         # Fix permissions issues 
-        chmod 777 /work/maven-output /work/maven-output/Dockerfile
-        chmod -R a+r /work/maven-output
-        find /work/maven-output -type d -print | xargs chmod 775
-        ls -l /work/maven-output
+        chmod 777 /work/ace-submodule-app1-work-dir /work/ace-submodule-app1-work-dir/Dockerfile
+        chmod -R a+r /work/ace-submodule-app1-work-dir
+        find /work/ace-submodule-app1-work-dir  -type d -print | xargs chmod 775
+        ls -l /work/ace-submodule-app1-work-dir
       volumeMounts:
         - mountPath: /work
           name: work

@@ -1,8 +1,16 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: maven-ace-build
+  name: ibmint-ace-build
 spec:
+  # The security and environment settings are needed for OpenShift in a non-default
+  # namespace such as cp4i. Kaniko is expecting to be root in the container.
+  stepTemplate:
+    securityContext:
+      runAsUser: 0
+    env:
+      - name: "HOME"
+        value: "/tekton/home"
   params:
     - name: dockerRegistry
       type: string
@@ -18,14 +26,13 @@ spec:
       volumeMounts:
         - mountPath: /work
           name: work
-    - name: maven-build
+    - name: ibmint-build
       image: $(params.dockerRegistry)/ace-minimal-devcontainer:12.0.8.0
       script: |
         #!/bin/bash
         export LICENSE=accept
         . /opt/ibm/ace-12/server/bin/mqsiprofile
         export PATH=/opt/ibm/ace-12/common/jdk/bin:$PATH
-        mkdir /work/maven-output
         cd /work/ace-submodule-app1
         id
         ./build.sh
@@ -33,7 +40,7 @@ spec:
       volumeMounts:
         - mountPath: /work
           name: work
-    - name: component-test
+    - name: unit-test
       image: $(params.dockerRegistry)/ace-minimal-devcontainer:12.0.8.0
       script: |
         #!/bin/bash
@@ -43,6 +50,18 @@ spec:
         cd /work/ace-submodule-app1
         id
         ./build-and-ut.sh
+      volumeMounts:
+        - mountPath: /work
+          name: work
+    - name: end-to-end-test
+      image: $(params.dockerRegistry)/ace-minimal-devcontainer:12.0.8.0
+      script: |
+        #!/bin/bash
+        export LICENSE=accept
+        . /opt/ibm/ace-12/server/bin/mqsiprofile
+        export PATH=/opt/ibm/ace-12/common/jdk/bin:$PATH
+        cd /work/ace-submodule-app1
+        id
         ./build-and-run-end-to-end-tests.sh
       volumeMounts:
         - mountPath: /work

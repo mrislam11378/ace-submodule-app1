@@ -9,7 +9,7 @@ spec:
   tasks:
     - name: build-from-source
       taskRef:
-        name: maven-ace-build
+        name: ibmint-ace-build
       params:
         - name: dockerRegistry
           value: $(params.dockerRegistry)

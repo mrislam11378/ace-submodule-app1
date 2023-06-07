@@ -26,7 +26,5 @@ spec:
       imagePullSecrets:
         - name: regcred
   configurations:
-    - teajdbc-policy
     - default-policy
-    - teajdbc
   version: 12.0.8.0-r1
