@@ -11,7 +11,7 @@ set -e
 
 # Build everything; we can do this in this case because we want to include the unit
 # tests, but production builds should specify the projects.
-ibmint deploy --input-path . --output-work-directory /tmp/ace-submodule-app1-work-dir
+ibmint deploy --input-path . --output-work-directory /tmp/ace-submodule-app1-work-dir --project App1_UnitTest
 
 # ibmint optimize server new for v12.0.4 - speed up test runs
 ibmint optimize server --work-directory /tmp/ace-submodule-app1-work-dir --enable JVM --disable NodeJS
