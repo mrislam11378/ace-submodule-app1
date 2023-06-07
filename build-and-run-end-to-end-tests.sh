@@ -10,11 +10,11 @@
 # Exit on any failure
 set -e
 
-ibmint deploy --input-path . --output-work-directory /tmp/ace-submodule-app1-work-dir --project App1_EndToEndTest
+ibmint deploy --input-path . --output-work-directory /work/ace-submodule-app1-work-dir --project App1_EndToEndTest
 
 # ibmint optimize server new for v12.0.4 - speed up test runs
-ibmint optimize server --work-directory /tmp/ace-submodule-app1-work-dir --enable JVM --disable NodeJS
+ibmint optimize server --work-directory /work/ace-submodule-app1-work-dir --enable JVM --disable NodeJS
 
 # Run the server to run the contract tests
-IntegrationServer -w /tmp/ace-submodule-app1-work-dir --test-project App1_EndToEndTest --test-junit-options "--reports-dir=junit-reports"
+IntegrationServer -w /work/ace-submodule-app1-work-dir --test-project App1_EndToEndTest --test-junit-options "--reports-dir=junit-reports"
 
