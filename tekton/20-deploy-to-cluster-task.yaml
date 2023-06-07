@@ -37,7 +37,7 @@ spec:
       args:
         - "apply"
         - "-f"
-        - "/work/ace-demo-pipeline/tekton/tea-tekton-service.yaml"
+        - "/work/ace-submodule-app1/tekton/tea-tekton-service.yaml"
       volumeMounts:
         - mountPath: /work
           name: work
