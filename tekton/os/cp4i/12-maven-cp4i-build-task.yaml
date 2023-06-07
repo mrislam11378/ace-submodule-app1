@@ -95,7 +95,7 @@ spec:
         runAsUser: 0
         capabilities:
           add: ["CHOWN", "DAC_OVERRIDE","FOWNER","SETFCAP","SETGID","SETUID"]
-      image: gcr.io/kaniko-project/executor:latest
+      image: gcr.io/kaniko-project/executor:v0.16.0
       # specifying DOCKER_CONFIG is required to allow kaniko to detect docker credential
       env:
         - name: "DOCKER_CONFIG"
@@ -103,88 +103,86 @@ spec:
       command:
         - /kaniko/executor
       args:
-        - --dockerfile=/work/maven-output/Dockerfile
+        - --dockerfile=/work/ace-submodule-app1-work-dir/Dockerfile
         - --destination=$(params.dockerRegistry)/tea-tekton-cp4i
-        - --context=/work/maven-output
-        - --build-arg=BASE_IMAGE=$(params.dockerRegistry)/ace-server-prod:12.0.8.0-r1
+        - --context=/work/ace-submodule-app1-work-dir
+        - --build-arg=BASE_IMAGE=$(params.dockerRegistry)/ace-server-prod:12.0.8.0-r2
         - --skip-tls-verify
       volumeMounts:
         - mountPath: /work
           name: work
-    - name: component-test
-      image: $(params.dockerRegistry)/ace-minimal-build:12.0.8.0-alpine
-      #
-      # Builds and runs the component tests using the JDBC credentials provided from
-      # the secret. Also uses the same init-creds.sh script used by the non-CP4i image
-      # to load credentials at startup.
-      #
-      # Leaves the resulting component test project in the work directory to be picked
-      # up by the second Kaniko build in the next step.
-      #
-      script: |
-        #!/bin/bash
-        export LICENSE=accept
-        . /opt/ibm/ace-12/server/bin/mqsiprofile
-        export PATH=/opt/ibm/ace-12/common/jdk/bin:$PATH
-        # Slightly hacky, but quicker than building everything again!
-        (cd /work/maven-output/ace-server/run && tar -cf - * ) | (cd /home/aceuser/ace-server/run && tar -xf - )
-        ls -l /home/aceuser/ace-server
-        # Set up credentials for the component tests; init-creds.sh looks in /tmp for policy
-        cp /work/ace-demo-pipeline/demo-infrastructure/TEAJDBC.policyxml /tmp/
-        bash /work/ace-demo-pipeline/demo-infrastructure/init-creds.sh
-        # Build and run the tests
-        cd /work/ace-demo-pipeline/TeaRESTApplication_ComponentTest
-        mvn --no-transfer-progress -Dct.work.directory=/home/aceuser/ace-server verify
-        # Slightly hacky, but quicker than building everything again!
-        (cd /home/aceuser/ace-server/run && tar -cf - * ) | (cd /work/maven-output/ace-server/run && tar -xf - )
-      volumeMounts:
-        - mountPath: /work
-          name: work
-        - name: secret-volume-2
-          mountPath: /var/run/secrets/jdbc
-    - name: container-setup-ct
-      image: $(params.dockerRegistry)/ace-minimal-build:12.0.8.0-alpine
-      #
-      # Copies files around and changes permissions to allow Kaniko to build the component
-      # test image in the next step. Also copies the Dockerfile into place for Kaniko.
-      #
-      script: |
-        #!/bin/bash
-        cd /work/maven-output
-        cp /work/ace-demo-pipeline/tekton/os/cp4i/Dockerfile Dockerfile
-        # Fix permissions issues 
-        chmod 777 /work/maven-output /work/maven-output/Dockerfile
-        chmod -R a+r /work/maven-output
-        find /work/maven-output -type d -print | xargs chmod 775
-        ls -l /work/maven-output/ace-server/run
-      volumeMounts:
-        - mountPath: /work
-          name: work
-    - name: docker-build-and-push-ct
-      # kaniko is expecting to run as root to build images
-      securityContext:
-        runAsUser: 0
-        capabilities:
-          add: ["CHOWN", "DAC_OVERRIDE","FOWNER","SETFCAP","SETGID","SETUID"]
-      image: gcr.io/kaniko-project/executor:latest
-      # specifying DOCKER_CONFIG is required to allow kaniko to detect docker credential
-      env:
-        - name: "DOCKER_CONFIG"
-          value: "/tekton/home/.docker/"
-      command:
-        - /kaniko/executor
-      args:
-        - --dockerfile=/work/maven-output/Dockerfile
-        - --destination=$(params.dockerRegistry)/tea-tekton-cp4i-ct
-        - --context=/work/maven-output
-        - --build-arg=BASE_IMAGE=$(params.dockerRegistry)/tea-tekton-cp4i
-        - --skip-tls-verify
-      volumeMounts:
-        - mountPath: /work
-          name: work
+    # - name: component-test
+    #   image: $(params.dockerRegistry)/ace-minimal-build:12.0.8.0-alpine
+    #   #
+    #   # Builds and runs the component tests using the JDBC credentials provided from
+    #   # the secret. Also uses the same init-creds.sh script used by the non-CP4i image
+    #   # to load credentials at startup.
+    #   #
+    #   # Leaves the resulting component test project in the work directory to be picked
+    #   # up by the second Kaniko build in the next step.
+    #   #
+    #   script: |
+    #     #!/bin/bash
+    #     export LICENSE=accept
+    #     . /opt/ibm/ace-12/server/bin/mqsiprofile
+    #     export PATH=/opt/ibm/ace-12/common/jdk/bin:$PATH
+    #     # Slightly hacky, but quicker than building everything again!
+    #     (cd /work/maven-output/ace-server/run && tar -cf - * ) | (cd /home/aceuser/ace-server/run && tar -xf - )
+    #     ls -l /home/aceuser/ace-server
+    #     # Set up credentials for the component tests; init-creds.sh looks in /tmp for policy
+    #     cp /work/ace-demo-pipeline/demo-infrastructure/TEAJDBC.policyxml /tmp/
+    #     bash /work/ace-demo-pipeline/demo-infrastructure/init-creds.sh
+    #     # Build and run the tests
+    #     cd /work/ace-demo-pipeline/TeaRESTApplication_ComponentTest
+    #     mvn --no-transfer-progress -Dct.work.directory=/home/aceuser/ace-server verify
+    #     # Slightly hacky, but quicker than building everything again!
+    #     (cd /home/aceuser/ace-server/run && tar -cf - * ) | (cd /work/maven-output/ace-server/run && tar -xf - )
+    #   volumeMounts:
+    #     - mountPath: /work
+    #       name: work
+    #     - name: secret-volume-2
+    #       mountPath: /var/run/secrets/jdbc
+    # - name: container-setup-ct
+    #   image: $(params.dockerRegistry)/ace-minimal-build:12.0.8.0-alpine
+    #   #
+    #   # Copies files around and changes permissions to allow Kaniko to build the component
+    #   # test image in the next step. Also copies the Dockerfile into place for Kaniko.
+    #   #
+    #   script: |
+    #     #!/bin/bash
+    #     cd /work/maven-output
+    #     cp /work/ace-demo-pipeline/tekton/os/cp4i/Dockerfile Dockerfile
+    #     # Fix permissions issues 
+    #     chmod 777 /work/maven-output /work/maven-output/Dockerfile
+    #     chmod -R a+r /work/maven-output
+    #     find /work/maven-output -type d -print | xargs chmod 775
+    #     ls -l /work/maven-output/ace-server/run
+    #   volumeMounts:
+    #     - mountPath: /work
+    #       name: work
+  #   - name: docker-build-and-push-ct
+  #     # kaniko is expecting to run as root to build images
+  #     securityContext:
+  #       runAsUser: 0
+  #       capabilities:
+  #         add: ["CHOWN", "DAC_OVERRIDE","FOWNER","SETFCAP","SETGID","SETUID"]
+  #     image: gcr.io/kaniko-project/executor:latest
+  #     # specifying DOCKER_CONFIG is required to allow kaniko to detect docker credential
+  #     env:
+  #       - name: "DOCKER_CONFIG"
+  #         value: "/tekton/home/.docker/"
+  #     command:
+  #       - /kaniko/executor
+  #     args:
+  #       - --dockerfile=/work/maven-output/Dockerfile
+  #       - --destination=$(params.dockerRegistry)/tea-tekton-cp4i-ct
+  #       - --context=/work/maven-output
+  #       - --build-arg=BASE_IMAGE=$(params.dockerRegistry)/tea-tekton-cp4i
+  #       - --skip-tls-verify
+  #     volumeMounts:
+  #       - mountPath: /work
+  #         name: work
   volumes:
     - name: work
       emptyDir: {}
-    - name: secret-volume-2
-      secret:
-        secretName: jdbc-secret
+
