@@ -13,11 +13,11 @@ spec:
         #!/bin/sh
         set -x
         cd /work
-        git clone "https://github.com/ot4i/ace-demo-pipeline"
+        git clone --recurse-submodules "https://github.com/mrislam11378/ace-submodule-app1.git"
         export REG_WITH_ESCAPED_SLASH=`echo $(params.dockerRegistry) | sed 's/\//\\\\\\//g'`
         echo $REG_WITH_ESCAPED_SLASH
-        sed -i "s/DOCKER_REGISTRY/$REG_WITH_ESCAPED_SLASH/g" /work/ace-demo-pipeline/tekton/tea-tekton-deployment.yaml
-        cat /work/ace-demo-pipeline/tekton/tea-tekton-deployment.yaml
+        sed -i "s/DOCKER_REGISTRY/$REG_WITH_ESCAPED_SLASH/g" /work/ace-submodule-app1/tekton/tea-tekton-deployment.yaml
+        cat /work/ace-submodule-app1/tekton/tea-tekton-deployment.yaml
       volumeMounts:
         - mountPath: /work
           name: work
@@ -27,7 +27,7 @@ spec:
       args:
         - "apply"
         - "-f"
-        - "/work/ace-demo-pipeline/tekton/tea-tekton-deployment.yaml"
+        - "/work/ace-submodule-app1/tekton/tea-tekton-deployment.yaml"
       volumeMounts:
         - mountPath: /work
           name: work
