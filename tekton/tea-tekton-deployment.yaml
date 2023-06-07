@@ -22,9 +22,7 @@ spec:
           secretName: jdbc-secret
       containers:
       - name: tea-tekton-cp4i
-        image: DOCKER_REGISTRY/tea-tekton-cp4i:latest
+        image: DOCKER_REGISTRY/tea-tekton:latest
         ports:
         - containerPort: 7800
         volumeMounts:
-        - name: secret-volume-2
-          mountPath: /var/run/secrets/jdbc
