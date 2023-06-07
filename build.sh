@@ -14,15 +14,15 @@ find ace* -name ".project" -exec dirname {} ";" | xargs -n1 -i{} echo mv {} .  |
 bash /tmp/move-projects.sh
 
 # Create the work directory
-rm -rf /tmp/ace-submodule-app1-work-dir junit-reports
-mqsicreateworkdir /tmp/ace-submodule-app1-work-dir
+rm -rf /work/ace-submodule-app1-work-dir junit-reports
+mqsicreateworkdir /work/ace-submodule-app1-work-dir
 
 # Build everything; we can do this in this case because we want to include the unit
 # tests, but production builds should specify the projects.
-ibmint deploy --input-path . --output-work-directory /tmp/ace-submodule-app1-work-dir
+ibmint deploy --input-path . --output-work-directory /work/ace-submodule-app1-work-dir
 
 # ibmint optimize server new for v12.0.4 - speed up test runs
-ibmint optimize server --work-directory /tmp/ace-submodule-app1-work-dir --enable JVM --disable NodeJS
+ibmint optimize server --work-directory /work/ace-submodule-app1-work-dir --enable JVM --disable NodeJS
 
 # Run the server to run the unit tests
-IntegrationServer -w /tmp/ace-submodule-app1-work-dir --test-project App1_UnitTest --test-junit-options "--reports-dir=junit-reports"
+IntegrationServer -w /work/ace-submodule-app1-work-dir --test-project App1_UnitTest --test-junit-options "--reports-dir=junit-reports"

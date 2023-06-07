@@ -41,6 +41,7 @@ spec:
         export PATH=/opt/ibm/ace-12/common/jdk/bin:$PATH
         cd /work/ace-submodule-app1
         id
+        ./build.sh
         ./build-and-ut.sh
         ./build-and-run-end-to-end-tests.sh
       volumeMounts:
