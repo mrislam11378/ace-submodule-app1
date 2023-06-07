@@ -19,7 +19,7 @@ spec:
         - mountPath: /work
           name: work
     - name: maven-build
-      image: $(params.dockerRegistry):ace-minimal-devcontainer-12.0.8.0
+      image: $(params.dockerRegistry)/ace-minimal-devcontainer:12.0.8.0
       script: |
         #!/bin/bash
         export LICENSE=accept
@@ -33,7 +33,7 @@ spec:
         - mountPath: /work
           name: work
     - name: component-test
-      image: $(params.dockerRegistry):ace-minimal-devcontainer-12.0.8.0
+      image: $(params.dockerRegistry)/ace-minimal-devcontainer:12.0.8.0
       script: |
         #!/bin/bash
         export LICENSE=accept
@@ -49,16 +49,26 @@ spec:
         # - name: secret-volume-2
         #   mountPath: /var/run/secrets/jdbc
     - name: next-stage-container-setup
-      image: $(params.dockerRegistry):ace-minimal-devcontainer-12.0.8.0
+      image: $(params.dockerRegistry)/ace-minimal-devcontainer:12.0.8.0
       script: |
         #!/bin/bash
         cd /work/maven-output
-        cp /work/ace-demo-pipeline/tekton/Dockerfile Dockerfile
+        cp /work/ace-submodule-app1/tekton/Dockerfile Dockerfile
+        # Fix permissions issues 
+        chmod 777 /work/maven-output /work/maven-output/Dockerfile
+        chmod -R a+r /work/maven-output
+        find /work/maven-output -type d -print | xargs chmod 775
+        ls -l /work/maven-output
       volumeMounts:
         - mountPath: /work
           name: work
     - name: docker-build-and-push
-      image: gcr.io/kaniko-project/executor:v0.16.0
+      # kaniko is expecting to run as root to build images
+      securityContext:
+        runAsUser: 0
+        capabilities:
+          add: ["CHOWN", "DAC_OVERRIDE","FOWNER","SETFCAP","SETGID","SETUID"]
+      image: gcr.io/kaniko-project/executor:latest
       # specifying DOCKER_CONFIG is required to allow kaniko to detect docker credential
       env:
         - name: "DOCKER_CONFIG"

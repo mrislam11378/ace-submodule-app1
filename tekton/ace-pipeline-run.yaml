@@ -8,4 +8,4 @@ spec:
     name: ace-pipeline
   params:
     - name: dockerRegistry
-      value: "docker.io/tdolby/experimental"
+      value: "default-route-openshift-image-registry.apps.ocp-550004yuns-xwkb.cloud.techzone.ibm.com/default"
