@@ -16,13 +16,8 @@ spec:
         productID: eb5b5e73f62b4dcf8c434c6274a158a7
         productMetric: FREE
     spec:
-      volumes:
-      - name: secret-volume-2
-        secret:
-          secretName: jdbc-secret
       containers:
       - name: tea-tekton-cp4i
-        image: DOCKER_REGISTRY/tea-tekton:latest
+        image: DOCKER_REGISTRY/tea-tekton-cp4i:latest
         ports:
         - containerPort: 7800
-        volumeMounts:
