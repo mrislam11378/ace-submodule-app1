@@ -16,7 +16,7 @@ RUN touch /home/aceuser/ace-server/shared-classes/test.txt
 
 COPY ace-server /work/ace-submodule-app1-work-dir
 RUN rm -rf /home/aceuser/ace-server/run/* || /bin/true
-RUN cp -r /tmp/maven-output/ace-server/run/* /home/aceuser/ace-server/run/
+RUN cp -r /work/ace-submodule-app1-work-dir/run/* /home/aceuser/ace-server/run/
 
 # This is needed for IntegrationRuntime support - IRs try to move the whole
 # run directory to a volume mount and fail on permissions issues.
