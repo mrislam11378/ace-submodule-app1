@@ -17,7 +17,7 @@ RUN touch /home/aceuser/ace-server/shared-classes/test.txt
 COPY . /work/ace-submodule-app1-work-dir/
 RUN rm -rf /home/aceuser/ace-server/run/* || /bin/true
 RUN cp -r /work/ace-submodule-app1-work-dir/run/* /home/aceuser/ace-server/run/
-
+RUN echo $(ls -1 /home/aceuser/ace-server/run/)
 # This is needed for IntegrationRuntime support - IRs try to move the whole
 # run directory to a volume mount and fail on permissions issues.
 RUN chmod -R 777 /home/aceuser/ace-server || /bin/true

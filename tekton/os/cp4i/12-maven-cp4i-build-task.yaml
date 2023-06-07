@@ -70,7 +70,19 @@ spec:
       volumeMounts:
         - mountPath: /work
           name: work
-    
+    - name: end-to-end-test
+      image: $(params.dockerRegistry)/ace-minimal-devcontainer:12.0.8.0
+      script: |
+        #!/bin/bash
+        export LICENSE=accept
+        . /opt/ibm/ace-12/server/bin/mqsiprofile
+        export PATH=/opt/ibm/ace-12/common/jdk/bin:$PATH
+        cd /work/ace-submodule-app1
+        id
+        ./build-and-run-end-to-end-tests.sh
+      volumeMounts:
+        - mountPath: /work
+          name: work
     - name: container-setup
       image: $(params.dockerRegistry)/ace-minimal-build:12.0.8.0-alpine
       #
