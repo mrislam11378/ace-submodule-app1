@@ -116,7 +116,7 @@ spec:
         - /kaniko/executor
       args:
         - --dockerfile=/work/ace-submodule-app1-work-dir/Dockerfile
-        - --destination=$(params.dockerRegistry)/tea-tekton-cp4i
+        - --destination=$(params.dockerRegistry)/submodule-app-tekton-cp4i
         - --context=/work/ace-submodule-app1-work-dir
         - --build-arg=BASE_IMAGE=$(params.dockerRegistry)/ace-server-prod:12.0.8.0-r2
         - --skip-tls-verify
