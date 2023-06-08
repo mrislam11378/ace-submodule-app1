@@ -14,10 +14,10 @@ spec:
         #!/bin/sh
         set -x
         cd /work
-        git clone "https://github.com/ot4i/ace-demo-pipeline"
+        git clone --recurse-submodules "https://github.com/mrislam11378/ace-submodule-app1.git"
         export REG_WITH_ESCAPED_SLASH=`echo $(params.dockerRegistry) | sed 's/\//\\\\\\//g'`
         echo $REG_WITH_ESCAPED_SLASH
-        sed -i "s/DOCKER_REGISTRY/$REG_WITH_ESCAPED_SLASH/g" /work/ace-demo-pipeline/tekton/os/cp4i/*.yaml
+        sed -i "s/DOCKER_REGISTRY/$REG_WITH_ESCAPED_SLASH/g" /work/ace-submodule-app1/tekton/os/cp4i/*.yaml
       volumeMounts:
         - mountPath: /work
           name: work
@@ -30,7 +30,7 @@ spec:
         kubectl get pods -n cp4i
         
         echo "Creating CR for application at " `date`
-        kubectl apply -f /work/ace-demo-pipeline/tekton/os/cp4i/create-integrationruntime.yaml
+        kubectl apply -f /work/ace-submodule-app1/tekton/os/cp4i/create-integrationruntime.yaml
         rc=1
         echo "Starting polling for operator IR at " `date`
         for i in `seq 1 48`
