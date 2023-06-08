@@ -34,6 +34,7 @@ spec:
         #!/bin/sh
         cd /work
         git clone --recurse-submodules "https://github.com/mrislam11378/ace-submodule-app1.git"
+        ls -l /work/ace-submodule-app1
         chmod -R 777 /work/ace-submodule-app1
       volumeMounts:
         - mountPath: /work
@@ -47,12 +48,9 @@ spec:
       script: |
         #!/bin/bash
         export LICENSE=accept
-        . /opt/ibm/ace-12/server/bin/mqsiprofile
-        export PATH=/opt/ibm/ace-12/common/jdk/bin:$PATH
         cd /work/ace-submodule-app1
         id
         ./build.sh
-        ls -l /work/ace-submodule-app1
         ls -l /work/ace-submodule-app1-work-dir
       volumeMounts:
         - mountPath: /work
@@ -62,8 +60,6 @@ spec:
       script: |
         #!/bin/bash
         export LICENSE=accept
-        . /opt/ibm/ace-12/server/bin/mqsiprofile
-        export PATH=/opt/ibm/ace-12/common/jdk/bin:$PATH
         cd /work/ace-submodule-app1
         id
         ./build-and-ut.sh
@@ -75,8 +71,6 @@ spec:
       script: |
         #!/bin/bash
         export LICENSE=accept
-        . /opt/ibm/ace-12/server/bin/mqsiprofile
-        export PATH=/opt/ibm/ace-12/common/jdk/bin:$PATH
         cd /work/ace-submodule-app1
         id
         ./build-and-run-end-to-end-tests.sh
